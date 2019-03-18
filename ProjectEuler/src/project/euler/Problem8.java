@@ -1,7 +1,7 @@
 package project.euler;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Problem8 {
@@ -51,21 +51,15 @@ public class Problem8 {
 				"84580156166097919133875499200524063689912560717606" +
 				"05886116467109405077541002256983155200055935729725" +
 				"71636269561882670428252483600823257530420752963450";
-		List<Integer> result;
-		result = findLargestConsecutive(4, foo);
-		System.out.println(listProduct(result));
-		result = findLargestConsecutive(13, foo);
-		System.out.println(listProduct(result));
+
+		findLargestConsecutive(4, foo);
+		findLargestConsecutive(13, foo);
 	}
 	
-	public static List<Integer> findLargestConsecutive(int n, String source) {
-		List<Integer> currLargest = new ArrayList<Integer>();
+	public static BigInteger findLargestConsecutive(int n, String source) {
+		BigInteger currLargest = BigInteger.valueOf(0);
+		List<Integer> currLargestList = null;
 		
-		//grab unsorted list so it can be searched for within the source number
-		List<Integer> unsorted = new ArrayList<Integer>();
-		List<Integer> sortedCurr = new ArrayList<Integer>();
-		
-		currLargest.add(0);
 		int cursor = 0;
 		while(cursor+n < source.length()) {
 			String currListStr = source.substring(cursor, cursor+n);
@@ -74,30 +68,25 @@ public class Problem8 {
 			for(int i = 0; i < currListStr.length(); i++) {
 				currList.add(Integer.parseInt(""+currListStr.charAt(i)));
 			}
-			sortedCurr = new ArrayList<Integer>(currList);
-			sortedCurr.sort((o1, o2) -> o2.compareTo(o1));
-			
-			if(!sortedCurr.contains(0)) {
-				for(int i = 0; i < n; i++) {
-					//compare curr largest list to curr list
-					if(currLargest.get(i) < sortedCurr.get(i)) {
-						unsorted = currList;
-						currLargest = sortedCurr;
-						break;
-					}
+			if(!currList.contains(0)) {
+				BigInteger currListProduct = listProduct(currList);
+				if(currListProduct.compareTo(currLargest) > 0) {
+					currLargestList = new ArrayList<Integer>(currList);
+					currLargest = currListProduct; 
 				}
 			}
 			cursor++;
 		}
-		System.out.println("largest consecutive: " + unsorted);
-		return unsorted;
+		System.out.println("largest consecutive: " + currLargestList);
+		System.out.println("result: " + currLargest);
+		return currLargest;
 	}
 	
-	public static int listProduct(List<Integer> source) {
-		int result = 0;
-		result += source.get(0);
+	public static BigInteger listProduct(List<Integer> source) {
+		BigInteger result = BigInteger.valueOf(0);
+		result = result.add(BigInteger.valueOf(source.get(0)));
 		for(int i = 1; i < source.size(); i++) {
-			result*=source.get(i);
+			result = result.multiply(BigInteger.valueOf(source.get(i)));
 		}
 		return result;
 	}
